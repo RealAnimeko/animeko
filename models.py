@@ -4,10 +4,10 @@ db = SQLAlchemy()
 
 class Quote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    anime = db.relationship('Anime', backref='quote')
-    character = db.relationship('Character', backref='quote')
+    anime = db.relationship('Anime', backref=backref('quote', uselist=False))
+    character = db.relationship('Character', backref=backref('quote', uselist=False))
     quote = db.Column(db.String())
-    tags = db.Column(db.String())
+    tag = db.Column(db.String(), uselist=False)
 
 class Anime(db.Model):
     id = db.Column(db.Integer, primary_key=True)

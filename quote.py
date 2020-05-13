@@ -3,7 +3,7 @@ class Quote:
         self._anime = anime                  # Class Anime
         self._character = character          # Class Character
         self._quote = quote                  # string
-        self._tags = tags                    # List of strings store as tag;tag;tag;...
+        self._tag = tags                    # List of strings store as tag;tag;tag;...
 
     # anime
     def get_anime(self):
@@ -27,11 +27,11 @@ class Quote:
         self._quote = quote
 
     # character
-    def get_tags(self):
-        return self._tags
+    def get_tag(self):
+        return self._tag
 
-    def get_tags_list(self):
-        return [x for x in self._tags.split(';')]
+    def get_tag_list(self):
+        return [x for x in self._tag.split(';')]
 
-    def set_tags(self, tags):
-        self._tags += ';%s' % value
+    def set_tag(self, tag):
+        self._tag += ';%s' % value
