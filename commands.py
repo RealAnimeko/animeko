@@ -5,7 +5,7 @@ import pickle
 with open('db.pickle', 'rb') as d:
     quotes = pickle.load(d)
 
-def do_function():
+def main():
     with app.app_context():
         db.create_all()
 
