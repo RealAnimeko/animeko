@@ -11,7 +11,8 @@ def main():
 
     with app.app_context():
         for quote in quotes:
-            create_quote(quote)
+            print(quote.get_tags())
+            # create_quote(quote)
         db.session.commit()
 
 def create_quote(quote):
