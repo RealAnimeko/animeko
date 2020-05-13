@@ -33,7 +33,7 @@ def create_quote(quote):
         anime=anime_model,
         character=character_model,
         quote=quote.get_quote(),
-        tags=quote.get_tags()
+        tags=quote.get_tags_list()
     ))
 
 if __name__ == '__main__':
