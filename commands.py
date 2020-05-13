@@ -1,7 +1,7 @@
 from app import db, app
 from models import Quote, Anime, Character
 
-def create_tables():
+def main():
     with app.app_context():
         db.create_all()
 
@@ -30,3 +30,6 @@ def create_quote(quote):
         quote=quote.get_quote(),
         tags=quote.get_tags()
     ))
+
+if __name__ == '__main__':
+    main()

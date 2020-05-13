@@ -15,6 +15,7 @@ app = Flask(__name__)
 api = Api(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 db.init_app(app)
 
 with open('db.pickle', 'rb') as d:
