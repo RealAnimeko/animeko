@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 
 from models import db
-from commands import main
 import os
 
 from models import Quote, Anime, Character
@@ -16,6 +15,8 @@ app = Flask(__name__)
 api = Api(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+# SECRET_KEY = os.environ.get('SECRET_KEY')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 db.init_app(app)
 
 with open('db.pickle', 'rb') as d:
