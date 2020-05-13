@@ -11,7 +11,7 @@ def main():
 
     with app.app_context():
         for quote in quotes:
-            print(quote.get_tags())
+            print(quote.get_tag())
             create_quote(quote)
         db.session.commit()
 
@@ -33,7 +33,7 @@ def create_quote(quote):
         anime=anime_model,
         character=character_model,
         quote=quote.get_quote(),
-        tags=quote.get_tags_list()
+        tags=quote.get_tag()
     ))
 
 if __name__ == '__main__':
