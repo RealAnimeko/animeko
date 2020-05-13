@@ -28,7 +28,7 @@ def create_quote(quote):
         image=anime.get_image()
     )
 
-    db.session(Quote(
+    db.session.add(Quote(
         anime=anime_model,
         character=character_model,
         quote=quote.get_quote(),
