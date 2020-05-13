@@ -1,5 +1,9 @@
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
+
+from models import db
 import os
 
 from anime import Anime
@@ -15,8 +19,8 @@ api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db.init_app(app)
 
-with open('db.pickle', 'rb') as db:
-    quotes = pickle.load(db)
+with open('db.pickle', 'rb') as d:
+    quotes = pickle.load(d)
 
 class GetRandomQuote(Resource):
     def get(self):
