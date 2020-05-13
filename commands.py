@@ -36,5 +36,5 @@ def create_quote(quote):
         tags=quote.get_tags_list()
     ))
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
