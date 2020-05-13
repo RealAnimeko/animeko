@@ -1,5 +1,6 @@
 from app import db, app
 from models import Quote, Anime, Character
+import pickle
 
 with open('db.pickle', 'rb') as d:
     quotes = pickle.load(d)
