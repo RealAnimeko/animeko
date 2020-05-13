@@ -12,7 +12,7 @@ def main():
     with app.app_context():
         for quote in quotes:
             print(quote.get_tags())
-            # create_quote(quote)
+            create_quote(quote)
         db.session.commit()
 
 def create_quote(quote):
