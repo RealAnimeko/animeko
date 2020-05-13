@@ -6,9 +6,7 @@ from sqlalchemy import or_
 from models import db
 import os
 
-from anime import Anime
-from character import Character
-from quote import Quote
+from models import Quote, Anime, Character
 
 # Temp libs
 import pickle
@@ -30,6 +28,17 @@ class GetRandomQuote(Resource):
             q = {}
             q['character'] = quote.get_character().get_name()
             q['quote'] = quote.get_quote()
+            json.append(q)
+
+        filters = [Quote.character.name.ilike("Lelouch Vi Brittana")]
+
+        quotesDB = db.session.query(Quote).\
+            filter(*filters)
+
+        for quote in quotesDB:
+            q = {}
+            q['character'] = quote.character.name
+            q['quote'] = quote.quote
             json.append(q)
 
         return { 'quotes': json }
