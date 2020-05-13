@@ -28,7 +28,10 @@ class Quote:
 
     # character
     def get_tags(self):
-        return [float(x) for x in self._tags.split(';')]
+        return self._tags
+
+    def get_tags_list(self):
+        return [x for x in self._tags.split(';')]
 
     def set_tags(self, tags):
         self._tags += ';%s' % value
