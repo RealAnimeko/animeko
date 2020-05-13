@@ -5,7 +5,7 @@ import pickle
 with open('db.pickle', 'rb') as d:
     quotes = pickle.load(d)
 
-def main():
+def do_function():
     with app.app_context():
         db.create_all()
 
@@ -36,5 +36,5 @@ def create_quote(quote):
         tags=quote.get_tags_list()
     ))
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

@@ -4,11 +4,12 @@ db = SQLAlchemy()
 
 class Quote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    anime = db.relationship('Anime', backref=backref('quote', uselist=False))
-    character = db.relationship('Character', backref=backref('quote', uselist=False))
-    quote = db.Column(db.String())
-    tag = db.Column(db.String(), uselist=False)
+    anime = db.relationship('Anime', uselist=False, backref='quote')
+    character = db.relationship('Character', uselist=False, backref="quote")
+    quote = db.Column(db.Text())
+    tags = db.Column(db.String())
 
+# Many quotes in one Anime
 class Anime(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     anime_id = db.Column(db.Integer, db.ForeignKey('quote.id'))
