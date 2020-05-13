@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+
 db = SQLAlchemy()
 
 class Quote(db.Model):
@@ -7,7 +8,6 @@ class Quote(db.Model):
     character = db.relationship('Character', backref='quote')
     quote = db.Column(db.String())
     tags = db.Column(db.String())
-
 
 class Anime(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +21,5 @@ class Character(db.Model):
     name = db.Column(db.String())
     image = db.Column(db.String())
 
-
-def get(limit=1000):
-    return db.session.query(Article).order_by(Article.date_of_publication)
+# def get(limit=1000):
+#     return db.session.query(Article).order_by(Article.date_of_publication)
