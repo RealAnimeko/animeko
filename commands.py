@@ -1,6 +1,9 @@
 from app import db, app
 from models import Quote, Anime, Character
 
+with open('db.pickle', 'rb') as d:
+    quotes = pickle.load(d)
+
 def main():
     with app.app_context():
         db.create_all()
