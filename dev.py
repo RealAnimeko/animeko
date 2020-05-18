@@ -1,20 +1,53 @@
 from anime import Anime
 from character import Character
 from quote import Quote
+import pandas as pd
+import re
 
 import pickle
 
-QUOTES = []
+df = pd.read_csv("quote.csv")
+print(df.head())
 
-lelouch = Character("Lelouch Vi Brittana", "n4px85w6nppbsq7/code_geass_lelouch.png")
-code_geass = Anime("Code Geass", "")
-q1 = Quote(code_geass, lelouch, "Time flows constantly, it doesn't care about the people who are struggling.", "inspiration;psychological")
-q2 = Quote(code_geass, lelouch, "If the king doesn’t move, then his subjects won’t follow.", "inspiration")
-q3 = Quote(code_geass, lelouch, "Why do people lie? It isn’t only because they struggle against each other, it’s also because there is something that they’re seeking.", "inspiration;deep")
+json = {}
+# Anime, Quote, Name, Img, AnimeImg
+for index, row in df.iterrows():
+    anime, quote, html_quote, character, tags, img, animeImg = row[0], row[1], row[2], row[3], row[4], row[5],row[6]
+    print(img)
+    if not anime in json:
+        json[anime] = {
+            'characters': [],
+            'image': animeImg
+        }
+        # print(anime)
 
-QUOTES.append(q1)
-QUOTES.append(q2)
-QUOTES.append(q3)
+    if not any(character in x for x in json[anime]['characters']):
+        json[anime]['characters'].append({
+            character: {
+                'quotes': [],
+                'image': img
+            }        })
+
+    for i in json[anime]['characters']:
+        character_json = i
+        if character in i:
+            # print(type(tags.split(',')))
+            q = Quote(html_quote, tags.split(','), 0, 0)
+            i[character]['quotes'].append(q)
+
+ANIME = []
+for anime_name in json:
+    # print(json[anime_name]['image'])
+    anime = Anime(anime_name, json[anime_name]['image'], [] , 0)
+    for char in json[anime_name]['characters']:
+        for character_name in char:
+            quotes = char[character_name]['quotes']
+            image = char[character_name]['image']
+            character = Character(character_name, image, quotes, 0)
+
+            anime.set_characters(character)
+
+    ANIME.append(anime)
 
 with open('db.pickle', 'wb') as db:
-    pickle.dump(QUOTES, db)
+    pickle.dump(ANIME, db)

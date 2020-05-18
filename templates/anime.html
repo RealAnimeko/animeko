@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <style media="screen">
+        #search {
+            width: 50vw;
+            /* background: transparent; */
+        }
+    </style>
+    <section class="header text-white text-center center-wrapper">
+        <div class="center-content">
+            <h1>Anime</h1>
+            <form action="/anime" method="GET">
+                <input type="text" class="form-control" id="search" placeholder="Search for an anime" name="name">
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+        </div>
+    </section>
+
+    <section>
+    </section>
+{% endblock %}

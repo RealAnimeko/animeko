@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <style media="screen">
+        card {
+            border: 0;
+        }
+
+        .character {
+            border-radius: 7px;
+            width: 50%;
+        }
+
+        .header {
+            background-image:
+                linear-gradient(315deg,  rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.73) 74%),
+                url("https://www.dropbox.com/s/{{ anime.image }}?raw=1");
+            padding-top: 100px;
+            padding-left: 100px;
+            margin-bottom: 25px;
+        }
+
+        .fb-page {
+            margin-bottom: 25px;
+        }
+    </style>
+    <section class="header text-white">
+        <div class="row no-gutters" style="height: inherit;">
+            <div class="col-lg-4 pr-1 pl-1">
+                <h1 class="">{{ anime.name }}</h1>
+            </div>
+            <div class="col-lg-8" style="overflow: scroll;">
+                <h1 class="">Characters</h1>
+                <div class="row no-gutters">
+                    {% for character in anime.characters %}
+                    <div class="col-lg-12">
+                        <div class="row no-gutters">
+                            <div class="col-lg-4">
+                                <img src="https://www.dropbox.com/s/{{ character.image }}?raw=1" class="character">
+                            </div>
+                            <div class="col-lg-8 center-wrapper">
+                                <div class="center-content">
+                                    <h3>{{ character.name }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%  endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                {% for character in anime.characters %}
+                <div class="card">
+                    <div class="card-body">
+                        <img class="character" src="https://www.dropbox.com/s/{{ character.image }}?raw=1">
+                        <h3>{{ character.name }}</h3>
+                        {% for quote in character.quotes %}
+                            <p>{{ quote.quote|safe }}</p>
+                            {% for tag in quote.tags %}
+                                <span class="badge badge-secondary">{{ tag }}</span>
+                            {%  endfor %}
+                        {%  endfor %}
+                    </div>
+                </div>
+                {%  endfor %}
+            </div>
+            <div class="col-lg-4">
+                <div class="fb-page" data-href="https://www.facebook.com/Animeko-101129927954000/" data-tabs="timeline" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                    <blockquote cite="https://www.facebook.com/Animeko-101129927954000/" class="fb-xfbml-parse-ignore">
+                        <a href="https://www.facebook.com/Animeko-101129927954000/">Animeko Facebook</a>
+                    </blockquote>
+                </div>
+
+                <div class="">
+                    <h2 class="text-center">Coming Soon</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

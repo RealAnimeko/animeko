@@ -3,38 +3,50 @@ from models import Quote, Anime, Character
 import pickle
 
 with open('db.pickle', 'rb') as d:
-    quotes = pickle.load(d)
+    animes = pickle.load(d)
 
 def main():
     with app.app_context():
         db.create_all()
 
     with app.app_context():
-        for quote in quotes:
-            print(quote.get_tag())
-            create_quote(quote)
+        for anime in animes:
+            print(anime)
+            create_quote(anime)
         db.session.commit()
 
-def create_quote(quote):
-    anime = quote.get_anime()
-    character = quote.get_character()
+def create_quote(anime):
 
-    anime_model = Anime(
+    characters_models = []
+    characters = anime.get_characters()
+    for character in characters:
+        quotes_models = []
+        quotes = character.get_quotes()
+        for quote in quotes:
+            print(type(quote.get_tags()))
+            quotes_models.append(Quote(
+                quote=quote.get_quote(),
+                tags=quote.get_tags(),
+                views=quote.get_views(),
+                likes=quote.get_likes()
+            ))
+
+        characters_models.append(Character(
+            name=character.get_name(),
+            image=character.get_image(),
+            quotes=quotes_models,
+            views=character.get_views()
+        ))
+
+
+    db.session.add(Anime(
         name=anime.get_name(),
-        image=anime.get_image()
-    )
-
-    character_model = Character(
-        name=anime.get_name(),
-        image=anime.get_image()
-    )
-
-    db.session.add(Quote(
-        anime=anime_model,
-        character=character_model,
-        quote=quote.get_quote(),
-        tags=quote.get_tag()
+        image=anime.get_image(),
+        characters=characters_models,
+        views=anime.get_views()
     ))
+
+    print("{} added".format(anime.get_name()))
 
 if __name__ == '__main__':
     main()

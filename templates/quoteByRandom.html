@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <style media="screen">
+
+        .controls {
+            position: absolute;
+            bottom: 0; left: 5vw;
+        }
+    </style>
+
+    <section id="bg" class="header text-white center-wrapper">
+        <div class="center-content">
+            <h3 id="quote">Click or Touch read</h3>
+            <h1 id="character">Random Quotes</h1>
+        </div>
+    </section>
+
+    <div class="controls text-white">
+        <i class="far fa-copy fa-2x" onclick="copyQuote(this)" style="padding: 30px;"></i>
+        <span id="copy-status"></span>
+    </div>
+
+    <script type="text/javascript">
+        const URL = 'https://animeko.herokuapp.com'
+        const APIREQUEST = `${URL}/generate_random_quotes`
+        const BG = document.getElementById('bg');
+        const QUOTE = document.getElementById('quote');
+        const CHARACTER = document.getElementById('character');
+        const copyStatus = document.getElementById('copy-status');
+        let quoteList = [];
+
+        function copyQuote(btn) {
+            let selection = window.getSelection();
+            let range = document.createRange();
+            range.selectNodeContents(QUOTE);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                let o = btn.textContent;
+                btn.classList.add('text-success');
+                copyStatus.innerText = `Quote Copied`;
+                setTimeout(() => {
+                    btn.classList.remove('text-success');
+                    copyStatus.innerText = ``;
+                }, 1200);
+            } catch(err) {
+                let o = btn.textContent;
+                btn.classList.add('text-danger');
+                copyStatus.innerText = `Try Again`;
+                setTimeout(() => {
+                    btn.classList.remove('text-danger');
+                    copyStatus.innerText = ``;
+                }, 1200);
+            }
+        }
+
+        BG.addEventListener("click", () => {
+            if(quoteList.length > 1) { quoteList.shift(); }
+            BG.style.backgroundImage =
+                `linear-gradient(315deg,  rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.73) 74%),
+                url("https://www.dropbox.com/s/${quoteList[0].image}?raw=1")`
+            QUOTE.innerHTML = `"${quoteList[0].quote}"`;
+            CHARACTER.innerText = `~ ${quoteList[0].character}`;
+        });
+        fetch(APIREQUEST)
+            .then(r => r.json())
+            .then(json => {
+                quoteList = quoteList.concat(json.results);
+
+                setInterval(() => {
+                    if(quoteList.length <= 10) {
+                        console.log('fetching more');
+                        fetch(APIREQUEST)
+                            .then(r => r.json())
+                            .then(json => quoteList = quoteList.concat(json.results));
+                    }
+                }, 5000)
+            });
+    </script>
+{% endblock %}

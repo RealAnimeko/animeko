@@ -1,18 +1,27 @@
+from character import Character
+
 class Anime:
-    def __init__(self, name, image):
-        self._name = name           # string
-        self._image = image         # string
+    def __init__(self, name, image="", characters=[], views=0):
+        self._name = name                   # str
+        self._image = image                 # str
+        self._characters = characters       # [character]
+        self._views = views                 # int
 
     # name
     def get_name(self):
         return self._name
 
-    def set_name(self, name):
-        self._name = name
-
     # image
     def get_image(self):
         return self._image
 
-    def set_image(self, image):
-        self._image = image
+    # characters
+    def get_characters(self):
+        return self._characters
+
+    def set_characters(self, character):
+        self._characters.append(character)
+
+    # view
+    def get_views(self):
+        return self._views
