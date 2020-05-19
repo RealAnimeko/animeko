@@ -3,6 +3,7 @@
     <head><meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- ADD META tags for SEO -->
+
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans|Open+Sans:400,600" rel="stylesheet">
         <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/all.min.css') }}" />
@@ -14,7 +15,16 @@
         <div id="fb-root"></div>
         <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v7.0"></script>
 
-        <title>Animeko</title>
+        <title>Animeko - Anime Quote Central</title>
+        <meta name="description" content="Read inspiration, motivational anime quotes. Search from lots of animes and join the community of anime quotes lovers.">
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Animeko" />
+        <meta property="og:description" content="read inspiration, motivational anime quotes. Search from lots of animes and join the community of anime quotes lovers." />
+        <meta property="og:image" content="{{ url_for('static', filename='icon.png') }}" />
+        <meta property="og:url" content="https://animeko.herokuapp.com/" />
+        <meta property="og:site_name" content="Animeko" />
+
         <style media="screen">
             body{
                 font-family: 'Open Sans', sans-serif;
@@ -28,6 +38,7 @@
             h3 { font-weight: 24px; }
 
             .text-blue { color: #2e92ee; }
+            .text-bold{ font-weight: 600; }
             .bg-blue { background: #2e92ee; color: white; }
 
             .mb-25 { margin-bottom: 25px; }
@@ -68,27 +79,31 @@
                 background-size: cover;
             }
 
-            .text-red { color: red; }
-            .text-lightred { color: red; }
-            .text-darkred { color: red; }
+            .text-darkred { color: #9A2617; }
+            .text-red { color: #AD2A1A; }
+            .text-lightred { color: #C02FaD; }
 
-            .text-green { color: green; }
-            .text-lightgreen { color: green; }
-            .text-darkgreen { color: green; }
+            .text-darkgreen { color: #28756E; }
+            .text-green { color: #3caea3; }
+            .text-lightgreen { color: #6BCCC2; }
 
-            .text-orange { color: orange; }
+            .text-orange { color: #F26D21; }
 
-            .text-blue { color: blue; }
-            .text-lightblue { color: lightblue; }
+            .text-darkblue { color: #107896; }
+            .text-blue { color: #1287A8; }
+            .text-lightblue { color: #1496BB; }
 
-            .text-yellow { color: yellow; }
+            .text-darkyellow { color: #D3B53D; }
+            .text-yellow { color: #EBC944; }
+            .text-lightyellow { color: #EFD469; }
 
-            .text-pink { color: pink; }
+            .text-pink { color: #FFC0CB; }
             .text-purple { color: purple; }
-            .text-black { color: black; }
-            .text-brown { color: brown; }
+            .text-black { color: #131516; }
+            .text-brown { color: #829356; }
 
-            .text-silver { color: silver; }
+            .text-silver { color: #707C80; }
+
             .fb-page {
                 border: none;
                 overflow: hidden;

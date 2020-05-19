@@ -2,13 +2,35 @@
 
 {% block body %}
     <style media="screen">
+        .about {
+            padding-top: 100px;
+            padding-left: 100px;
+        }
     </style>
-    <section class="header text-white text-center center-wrapper">
-        <div class="center-content">
+    <!-- <section class="header text-white">
             <h1>About</h1>
-        </div>
-    </section>
+    </section> -->
+    <section class="about mb-25">
+        <h1>About</h1>
 
-    <section>
+        <h3 class="">
+            We are currently in beta.
+        </h3>
+
+        <div class="">
+            Animeko's purpose to provide . Get inspired, motivated through reading
+            quotes that we provide. Since we are currently new, we have limited features,
+            but as time progresses, we will continue to integrate more things anime quote related.
+            So stay tune by
+            <a href="https://www.facebook.com/Animeko-101129927954000/"  class="text-blue text-bold" target="_blank">LIKING</a>
+            our fb page for updates and join the community.
+        </div>
+
+        <address class="">
+            if you have any enquiries about Animeko, please send us email
+            <a href="mailto:AnimekoEnquiries@gmail.com" class="text-blue text-bold">HERE</a>
+        </address>
+
+        <a href="{{ url_for('index') }}" class="btn bg-blue">Return Home</a>
     </section>
 {% endblock %}

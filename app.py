@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from flask_restful import Resource, Api, reqparse
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from sqlalchemy import or_, desc
 from sqlalchemy.sql import func
 from sqlalchemy.orm import load_only
@@ -16,6 +17,8 @@ from models import Quote, Anime, Character
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+url = 'https://animeko.herokuapp.com'
+cors = CORS(app, resources={r"/*": {'origins': url}})
 
 os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -116,9 +119,9 @@ def quote():
 def generate_random_quotes():
     quotes = get_random_quotes(20)
     if quotes:
-        return {'results': quotes, 'status': 200}, 200, {'Access-Control-Allow-Origin': '*'}
+        return {'results': quotes, 'status': 200}, 200, {'Access-Control-Allow-Origin': url}
     else:
-        return {'results': [], 'status': 404}, 404, {'Access-Control-Allow-Origin': '*'}
+        return {'results': [], 'status': 404}, 404, {'Access-Control-Allow-Origin': url}
 
 @app.route('/anime', methods=['GET', 'POST'])
 def anime():
@@ -140,8 +143,10 @@ def anime():
                 for quote in character.quotes:
                     print(type(quote.tags))
                     q = {}
+                    q['id'] = quote.id
                     q['quote'] = quote.quote
                     q['tags'] = quote.tags
+                    q['likes'] = quote.likes
                 #     q['views'] = quote.views
                     c['quotes'].append(q)
                 c['views'] = character.views
@@ -161,6 +166,25 @@ def about():
 def quote_of_the_day():
     posts = get_quote_of_the_day()
     return render_template('quoteOfTheDay.html', posts=posts)
+
+@app.route('/api/upvote', methods=['POST'])
+def upvote():
+    if request.method == 'POST':
+        quote = Quote.query.get(request.args.get('id'))
+        quote.likes += 1
+        db.session.commit()
+    return {'likes': quote.likes, 'status': 200}, 200, {'Access-Control-Allow-Origin': url}
+
+@app.route('/api/downvote', methods=['POST'])
+def downvote():
+    if request.method == 'POST':
+        quote = Quote.query.get(request.args.get('id'))
+        if(quote.likes <= 0):
+            quote.likes = 0
+        else:
+            quote.likes -= 1
+        db.session.commit()
+    return {'likes': quote.likes, 'status': 200}, 200, {'Access-Control-Allow-Origin': url}
 
 ##### Error Handling #####
 @app.errorhandler(404)
