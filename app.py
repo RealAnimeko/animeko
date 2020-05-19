@@ -20,7 +20,6 @@ app.url_map.strict_slashes = False
 url = 'https://animeko.herokuapp.com'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
-os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db.init_app(app)
 
