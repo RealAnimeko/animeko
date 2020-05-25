@@ -21,8 +21,6 @@
             margin-bottom: 25px;
         }
 
-        .fb-page { margin-bottom: 25px; }
-
         .quote-hearted { color: pink; }
 
         .center-image {
@@ -30,36 +28,16 @@
             border-radius: 7px;
         }
         .character-icon {
-            width: 50%;
+            width: 100%;
         }
 
     </style>
+
     <section class="header text-white">
-        <div class="row no-gutters" style="height: inherit;">
-            <div class="col-lg-4 pr-1 pl-1">
-                <h1 class="">{{ anime.name }}</h1>
-            </div>
-            <div class="col-lg-8">
-                <h1 class="">Characters</h1>
-                <div class="row no-gutters">
-                    {% for character in anime.characters %}
-                    <div class="col-lg-12">
-                        <div class="row no-gutters">
-                            <div class="col-lg-4">
-                                <img src="https://www.dropbox.com/s/{{ character.image }}?raw=1" class="character-icon">
-                            </div>
-                            <div class="col-lg-8 center-wrapper">
-                                <div class="center-content">
-                                    <h3>{{ character.name }}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {%  endfor %}
-                </div>
-            </div>
-        </div>
+        <h1 class="text-bold box-shadow">{{ anime.name }}</h1>
     </section>
+
+    {% include "tableOfContent.html" %}
 
     <section class="container">
         <div class="mb-25">
@@ -70,7 +48,7 @@
         <div class="row mb-25">
             <div class="col-lg-8">
                 {% for character in anime.characters %}
-                <div class="card">
+                <div id="{{ character.name }}" class="card">
                     <div class="card-body">
                         <img src="https://www.dropbox.com/s/{{ character.image }}?raw=1" class="center-image mb-3">
                         <h3 class="text-center">{{ character.name }}</h3>
@@ -93,7 +71,7 @@
                 {%  endfor %}
             </div>
             <div class="col-lg-4">
-                <div class="fb-page" data-href="https://www.facebook.com/Animeko-101129927954000/" data-tabs="timeline" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                <div class="fb-page mb-25" data-href="https://www.facebook.com/Animeko-101129927954000/" data-tabs="timeline" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
                     <blockquote cite="https://www.facebook.com/Animeko-101129927954000/" class="fb-xfbml-parse-ignore">
                         <a href="https://www.facebook.com/Animeko-101129927954000/">Animeko Facebook</a>
                     </blockquote>

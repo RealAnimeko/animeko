@@ -1,11 +1,19 @@
 <!DOCTYPE html>
     <html lang="en">
-    <head><meta charset="utf-8">
+    <head>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- ADD META tags for SEO -->
+        <meta name="description" content="Read inspiration, motivational anime quotes. Search from lots of animes and join the community of anime quotes lovers.">
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Animeko" />
+        <meta property="og:description" content="read inspiration, motivational anime quotes. Search from lots of animes and join the community of anime quotes lovers." />
+        <meta property="og:image" content="{{ url_for('static', filename='icon.png') }}" />
+        <meta property="og:url" content="https://animeko.herokuapp.com/" />
+        <meta property="og:site_name" content="Animeko" />
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans|Open+Sans:400,600" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:700,800|Open+Sans:400,600" rel="stylesheet">
         <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/all.min.css') }}" />
 
         <script src="https://code.jquery.com/jquery-3.4.1.js" crossorigin="anonymous"></script>
@@ -16,30 +24,26 @@
         <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v7.0"></script>
 
         <title>Animeko - Anime Quote Central</title>
-        <meta name="description" content="Read inspiration, motivational anime quotes. Search from lots of animes and join the community of anime quotes lovers.">
-
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Animeko" />
-        <meta property="og:description" content="read inspiration, motivational anime quotes. Search from lots of animes and join the community of anime quotes lovers." />
-        <meta property="og:image" content="{{ url_for('static', filename='icon.png') }}" />
-        <meta property="og:url" content="https://animeko.herokuapp.com/" />
-        <meta property="og:site_name" content="Animeko" />
 
         <style media="screen">
+            html {
+              scroll-behavior: smooth;
+            }
+
             body{
                 font-family: 'Open Sans', sans-serif;
                 color: #343434;
             }
 
-            h1, h2, h3, h4, h5, h6 { font-family: 'Merriweather Sans', sans-serif; }
+            /* h1, h2, h3, h4, h5, h6 { font-family: 'Merriweather Sans', sans-serif; } */
 
-            h1 { font-weight: 48px; }
-            h2 { font-weight: 28px; }
-            h3 { font-weight: 24px; }
+            h1 { font-size: 48px; }
+            h2 { font-size: 28px; }
+            h3 { font-size: 24px; }
 
-            .text-blue { color: #2e92ee; }
-            .text-bold{ font-weight: 600; }
-            .bg-blue { background: #2e92ee; color: white; }
+            .text-primary { color: #2e92ee; }
+            .text-bold{ font-weight: 700; }
+            .bg-primary { background: #2e92ee; color: white; }
 
             .mb-25 { margin-bottom: 25px; }
 
@@ -61,6 +65,8 @@
                 background-color: transparent;
                 transition: 500ms ease;
                 z-index: 100;
+                position: fixed;
+                width: 100%;
             }
             .navbar.scrolled {
                 background: #2e92ee;
@@ -96,6 +102,8 @@
             .text-darkyellow { color: #D3B53D; }
             .text-yellow { color: #EBC944; }
             .text-lightyellow { color: #EFD469; }
+
+            .box-shadow { text-shadow: 0px 0px 20px #000000, 0px 0px 20px #000000; }
 
             .text-pink { color: #FFC0CB; }
             .text-purple { color: purple; }

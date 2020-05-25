@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request
-from flask_restful import Resource, Api, reqparse
+from flask import Flask, render_template, request, send_from_directory
+# from flask_restful import Resource, Api, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy import or_, desc
@@ -17,17 +17,30 @@ from models import Quote, Anime, Character
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-url = 'https://animeko.herokuapp.com'
+# url = 'https://animeko.herokuapp.com'
+url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
+os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db.init_app(app)
 
-TOTALQUOTES = 0;
+TOTALQUOTES = 0
+ANIME_NAMES = []
 def get_total_quotes():
     global TOTALQUOTES
     TOTALQUOTES = db.session.query(Quote).count()
     print("Total Quotes: {}".format(TOTALQUOTES))
+    animes = Anime.query.all()
+    global ANIME_NAMES
+    # for anime in animes:
+    #     name = anime.name
+    #     if '\'' in anime.name:
+    #         name = name.replace("'", "'")
+    #     ANIME_NAMES.append(name)
+    # print(ANIME_NAMES)
+
+    ANIME_NAMES = [anime.name for anime in animes]
 
 def get_random_quotes(total):
     quotes = Quote.query.order_by(func.random()).limit(total).all()
@@ -64,11 +77,11 @@ def get_quote_of_the_day():
     }
     json = requests.get(url, params=params).json()
 
+    print(requests.get(url, params=params).url)
     posts = {
         'data': []
     }
     quote_of_the_day = {}
-    quote_of_the_day
     for post in json['data']:
         if 'message' in post:
             ids = post['id'].split('_')
@@ -77,12 +90,9 @@ def get_quote_of_the_day():
                 'story_fbid': ids[1]
             }
             if not 'quote_of_the_day' in posts:
-                print("HERE")
                 posts['quote_of_the_day'] = data
-            elif re.search("Quote of the day #[0-9]", post['message']):
+            elif re.search("Quote of the day #[0-9]".lower(), post['message'].lower()):
                 posts['data'].append(data)
-            else:
-                print("Not quote fo the day")
 
     return posts
 
@@ -154,12 +164,24 @@ def anime():
 
             print(a)
             return render_template('quotesByAnime.html', anime=a)
-    return render_template('anime.html')
+    return render_template('anime.html', animes=ANIME_NAMES)
 
 @app.route('/about')
 def about():
     about = []
-    return render_template('about.html', about=about)
+    faq = {
+      "faq": [
+        {
+            "question": "Why does it load slowly sometimes?",
+            "answer": "The main reason we load slowly, it that we are hosting on a free server called Heruko. For you who don't know Heroku, basically the free tier will put my site to sleep, everytime it is not used for a period of time. Meaning when someone accesses Animeko whilst the its sleeping, then it need time to awake up and load the entire backend server up. As time progresses and milestones are reached, then maybe we move to other services.",
+
+        }, {
+            "question": "Can I request a quote to be put up?",
+            "answer": "Yes, all you need to do is email our enquiry email, and if it not available and appropaite than we'll put it up. We also keep an author which is your instagram andit will display under the quotes.",
+        }
+        ]
+    }
+    return render_template('about.html', faq=faq, nav_change="#2e92ee")
 
 @app.route('/quote_of_the_day')
 def quote_of_the_day():
@@ -201,6 +223,11 @@ def page_not_found(e):
         'message': 'Sorry, No results'
     }
     return render_template('err.html', err=err), err['status']
+
+# favicon display
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
 if __name__ == "__main__":
     app.before_first_request(get_total_quotes)

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md" style="position: fixed; width: 100%;">
+<nav id="nav" class="navbar navbar-expand-md" style="">
     <a class="navbar-brand" href="{{ url_for('index') }}">
         <img src="{{ url_for('static', filename='icon.png') }}" width="50" height="50" class="d-inline-block align-top" style="border-radius: 7px;">
         <div class="" style="display: inline-block; position: relative; padding-bottom: 7px; padding-left: 5px;">
@@ -16,6 +16,8 @@
     </div>
 </nav>
 <script type="text/javascript">
+    let change = "{{ nav_change }}"
+    if(change) { document.getElementById('nav').style.background = `${change}`; }
     $(window).scroll(function(){
         $('nav').toggleClass('scrolled', $(this).scrollTop()>50);
         $('nav').toggleClass('text-blue', $(this).scrollTop()>50);

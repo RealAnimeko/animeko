@@ -7,11 +7,13 @@
             /* background: transparent; */
         }
     </style>
-    <section class="header text-white text-center center-wrapper">
+    <section class="header text-white text-center center-wrapper mb-25">
         <div class="center-content">
-            <h1>Anime</h1>
+            <h1 class="text-bold box-shadow mb-25">Anime</h1>
             <form action="/anime" method="GET">
-                <input type="text" class="form-control" id="search" placeholder="Search for an anime" name="name">
+                <input list="search-list" type="text" class="form-control" id="search" placeholder="Search for an anime" name="name">
+                <datalist id="search-list">
+                </datalist>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -19,6 +21,25 @@
         </div>
     </section>
 
-    <section>
+    <section class="anime-list mb-25">
+        <h3 class="text-bold text-center mb-25">Available Animes</h3>
+        <ul id="anime-list" class="list-group list-group-flush"></ul>
     </section>
+
+    <script type="text/javascript">
+        let search = document.getElementById('search-list');
+        let list = document.getElementById('anime-list');
+        {% for anime in animes %}
+            var li = document.createElement('li');
+            li.classList.add('list-group-item');
+            var a = document.createElement('a');
+            a.setAttribute('href', '{{ url_for("anime", name=anime ) }}');
+            a.innerText = "{{ anime }}";
+            li.appendChild(a);
+            list.appendChild(li);
+            var option = document.createElement('option');
+            option.setAttribute('value', "{{ anime }}");
+            search.appendChild(option);
+        {% endfor %}
+    </script>
 {% endblock %}
