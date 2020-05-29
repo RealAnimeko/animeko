@@ -6,39 +6,42 @@
             width: 50vw;
             /* background: transparent; */
         }
+
+        .anime-name:hover {
+            background: #2e92ee;
+        }
     </style>
+
     <section class="header text-white text-center center-wrapper mb-25">
         <div class="center-content">
             <h1 class="text-bold box-shadow mb-25">Anime</h1>
             <form action="/anime" method="GET">
-                <input list="search-list" type="text" class="form-control" id="search" placeholder="Search for an anime" name="name">
-                <datalist id="search-list">
-                </datalist>
+                <input list="search-list" type="text" class="form-control mb-25" id="search" placeholder="Search for an anime" name="name">
+                <datalist id="search-list"></datalist>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-
         </div>
     </section>
 
-    <section class="anime-list mb-25">
+    <section class="anime-list container mb-25 mt-5">
         <h3 class="text-bold text-center mb-25">Available Animes</h3>
-        <ul id="anime-list" class="list-group list-group-flush"></ul>
+        <div id="anime-list" class="row text-center"></div>
     </section>
 
     <script type="text/javascript">
+        const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
         let search = document.getElementById('search-list');
         let list = document.getElementById('anime-list');
         {% for anime in animes %}
-            var li = document.createElement('li');
-            li.classList.add('list-group-item');
             var a = document.createElement('a');
-            a.setAttribute('href', '{{ url_for("anime", name=anime ) }}');
-            a.innerText = "{{ anime }}";
-            li.appendChild(a);
-            list.appendChild(li);
+            a.classList.add('col-lg-4', 'anime-name', 'p-4')
+            a.setAttribute('href', '{{ url_for("anime", name=anime|safe ) }}');
+            a.innerText = "{{ anime|safe }}";
+            list.appendChild(a);
+
             var option = document.createElement('option');
-            option.setAttribute('value', "{{ anime }}");
+            option.setAttribute('value', "{{ anime|safe }}");
             search.appendChild(option);
         {% endfor %}
     </script>

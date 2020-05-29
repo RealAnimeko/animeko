@@ -7,11 +7,6 @@
             border-bottom: 1px solid grey;
         }
 
-        /* .character {
-            border-radius: 7px;
-            width: 75%;
-        } */
-
         .header {
             background-image:
                 linear-gradient(315deg,  rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.73) 74%),
@@ -27,14 +22,19 @@
             width: 100%;
             border-radius: 7px;
         }
-        .character-icon {
-            width: 100%;
-        }
+        .character-icon { width: 100%; }
 
     </style>
 
     <section class="header text-white">
         <h1 class="text-bold box-shadow">{{ anime.name }}</h1>
+        <h3 class="text-bold box-shadow">Total Quotes: {{ anime.total_quotes }} </h3>
+        <div class="">
+            <h3 class="text-bold box-shadow">Tags:</h3>
+            {% for tag in anime.tags %}
+                <span class="badge badge-secondary">{{ tag }}</span>
+            {%  endfor %}
+        </div>
     </section>
 
     {% include "tableOfContent.html" %}

@@ -73,11 +73,11 @@ def get_quote_of_the_day():
         'version':'v7.0',
         'path':'101129927954000%2Fposts',
         'classic':'0',
-        'access_token':'EAAHkCZAp4QgMBAPZCZCAdaZCeOQSrPtliQxoXyXfJUZAa8jDyTlCDA3lZBK9H5ZBiBca5Wqh0wNyZAAq5hnNnI60T1OVAvBG6GYG2PKJ72kqJVEO9ZCPN5319mhHo7EkrEEhWhMx6T5ZCnyBYZC0rfAZC8RP0lOZAf2rgC5UiR1mMWTXoRwZDZD'
+        'access_token':'EAAHkCZAp4QgMBANeC4PSHRUEp3vmbsJcs2INCnZCXuKfylZCYI7AGlstaMOJ1WnhAIigufMdb9vQ4t5aYHM9NFeysZCRrGIRFPikpziAmprhULuqJBvaPN3aszpri4cTHHr6PLoF0ZBZAfeZAYWALuZB5DjD6pnfxi0FjMW4ZBnzoywZDZD'
     }
-    json = requests.get(url, params=params).json()
+    r = requests.get(url, params=params)
+    json = r.json()
 
-    print(requests.get(url, params=params).url)
     posts = {
         'data': []
     }
@@ -144,22 +144,26 @@ def anime():
             a['name'] = anime.name
             a['image'] = anime.image
             a['characters'] = []
+            a['total_quotes'] = 0
+            a['tags'] = []
             for character in anime.characters:
+                a['total_quotes'] += len(character.quotes)
                 c = {}
                 c['name'] = character.name
                 c['image'] = character.image
                 c['quotes'] = []
                 for quote in character.quotes:
-                    print(type(quote.tags))
+                    a['tags'].extend(quote.tags)
                     q = {}
                     q['id'] = quote.id
                     q['quote'] = quote.quote
                     q['tags'] = quote.tags
                     q['likes'] = quote.likes
-                #     q['views'] = quote.views
+                    q['views'] = quote.views
                     c['quotes'].append(q)
                 c['views'] = character.views
                 a['characters'].append(c)
+            a['tags'] = list(set(a['tags']))
             a['views'] = anime.views
 
             print(a)
@@ -178,8 +182,7 @@ def about():
         }, {
             "question": "Can I request a quote to be put up?",
             "answer": "Yes, all you need to do is email our enquiry email, and if it not available and appropaite than we'll put it up. We also keep an author which is your instagram andit will display under the quotes.",
-        }
-        ]
+        }]
     }
     return render_template('about.html', faq=faq, nav_change="#2e92ee")
 
@@ -221,6 +224,14 @@ def page_not_found(e):
     err = {
         'status': 400,
         'message': 'Sorry, No results'
+    }
+    return render_template('err.html', err=err), err['status']
+
+@app.errorhandler(500)
+def page_not_found(e):
+    err = {
+        'status': 500,
+        'message': 'Sorry, Internal Server Error. This is our end thats not working.'
     }
     return render_template('err.html', err=err), err['status']
 
