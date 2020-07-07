@@ -35,14 +35,20 @@
             color: #2e92ee;
         }
 
+        #bg {
+            -webkit-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+            -moz-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+            box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+        }
+        
         .features-title { margin-bottom: 25px; }
         .features-text { line-height: 1.4 }
     </style>
 
-        <section class="header text-white center-wrapper">
+        <section id="bg" class="header text-white center-wrapper">
             <div class="center-content">
-                <h1 class="text-center">Animeko</h1>
-                <h1 class="text-center">Read from over {{ total_quotes }} quotes</h1>
+                <h1 class="text-center text-bold box-shadow">Animeko</h1>
+                <h1 class="text-center text-bold box-shadow">Read from over {{ total_quotes }} quotes</h1>
                 <div class="row no-gutters mt-5">
                     <div class="col-sm-6">
                         <a href="{{ url_for('quote') }}" class="btn btn-outline-white text-white" type="button">Start Reading</a>

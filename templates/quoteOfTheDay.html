@@ -11,9 +11,15 @@
             position: absolute;
             bottom: 0;
         }
+
+        #bg {
+            -webkit-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+            -moz-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+            box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+        }
     </style>
 
-    <div class="header">
+    <div id="bg" class="header">
         <div class="quote-of-the-day">
             <div class="fb-post" data-href="https://developers.facebook.com/permalink.php?story_fbid={{ posts['quote_of_the_day']['story_fbid'] }}&amp;id={{ posts['quote_of_the_day']['id'] }}" data-show-text="false" data-width="750">
                 <blockquote cite="" class="fb-xfbml-parse-ignore">

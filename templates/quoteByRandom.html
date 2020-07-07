@@ -35,6 +35,7 @@
             margin: 10px;
         }
 
+        .box-shadow { text-shadow: 0px 0px 20px #000000, 0px 0px 20px #000000, 0px 0px 20px #000000, 0px 0px 20px #000000, 0px 0px 30px #000000; }
     </style>
 
     <section id="bg" class="header text-white center-wrapper">
@@ -54,7 +55,8 @@
     </div>
 
     <script type="text/javascript">
-        const URL = 'https://animeko.herokuapp.com'
+        // const URL = 'https://animeko.herokuapp.com'
+        const URL = 'http://localhost:8000'
         const APIREQUEST = `${URL}/generate_random_quotes`
         const BG = document.getElementById('bg');
         const QUOTE = document.getElementById('quote');

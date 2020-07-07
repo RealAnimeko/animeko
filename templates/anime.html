@@ -10,9 +10,15 @@
         .anime-name:hover {
             background: #2e92ee;
         }
+
+        #bg {
+            -webkit-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+            -moz-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+            box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
+        }
     </style>
 
-    <section class="header text-white text-center center-wrapper mb-25">
+    <section id="bg" class="header text-white text-center center-wrapper mb-25">
         <div class="center-content">
             <h1 class="text-bold box-shadow mb-25">Anime</h1>
             <form action="/anime" method="GET">

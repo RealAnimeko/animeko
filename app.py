@@ -14,32 +14,17 @@ from models import db
 import os
 
 from models import Quote, Anime, Character
+from global_var import *
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-url = 'https://animeko.herokuapp.com'
-# url = '*'
+# url = 'https://animeko.herokuapp.com'
+url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
+os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db.init_app(app)
-
-TOTALQUOTES = 0
-ANIME_NAMES = []
-def get_total_quotes():
-    global TOTALQUOTES
-    TOTALQUOTES = db.session.query(Quote).count()
-    print("Total Quotes: {}".format(TOTALQUOTES))
-    animes = Anime.query.all()
-    global ANIME_NAMES
-    # for anime in animes:
-    #     name = anime.name
-    #     if '\'' in anime.name:
-    #         name = name.replace("'", "'")
-    #     ANIME_NAMES.append(name)
-    # print(ANIME_NAMES)
-
-    ANIME_NAMES = [anime.name for anime in animes]
 
 def get_random_quotes(total):
     quotes = Quote.query.order_by(func.random()).limit(total).all()
@@ -115,7 +100,7 @@ def index():
     quote_of_the_day = get_random_quotes(1).pop(0)
     print(quote_of_the_day)
     return render_template('index.html',
-        total_quotes=TOTALQUOTES,
+        total_quotes=total_quotes,
         popular_animes=popular_animes,
         quote_of_the_day=quote_of_the_day)
 
@@ -167,7 +152,7 @@ def anime():
 
             print(a)
             return render_template('quotesByAnime.html', anime=a)
-    return render_template('anime.html', animes=ANIME_NAMES)
+    return render_template('anime.html', animes=anime_list)
 
 @app.route('/about')
 def about():
@@ -240,5 +225,4 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
 if __name__ == "__main__":
-    app.before_first_request(get_total_quotes)
     app.run(debug=True, port=8000)
