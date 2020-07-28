@@ -22,7 +22,9 @@ app.url_map.strict_slashes = False
 url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
+os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+
 db.init_app(app)
 
 def get_random_quotes(total):
@@ -56,11 +58,12 @@ def get_quote_of_the_day():
         'version':'v7.0',
         'path':'101129927954000%2Fposts',
         'classic':'0',
-        'access_token':'EAAHkCZAp4QgMBANeC4PSHRUEp3vmbsJcs2INCnZCXuKfylZCYI7AGlstaMOJ1WnhAIigufMdb9vQ4t5aYHM9NFeysZCRrGIRFPikpziAmprhULuqJBvaPN3aszpri4cTHHr6PLoF0ZBZAfeZAYWALuZB5DjD6pnfxi0FjMW4ZBnzoywZDZD'
+        'access_token':'EAAHkCZAp4QgMBAF9NMwFcwn6ABThmIstiL2QlLwzfWPzALEggL3ZCQygYatdrRiujxZAQOwGHuQOFVqqqJwcpiMYZARn5wVm38rMEyOkg24cjcDGOlXzRclJF7VJuJddviZB5oCssYsbOSFxWyidGrxP4017Nj3aWwvCa8Ki6EAZDZD'
     }
     r = requests.get(url, params=params)
     json = r.json()
-    print(r.url)
+    
+    # print(r.url)
     posts = {
         'prev': []
     }
