@@ -18,11 +18,10 @@ from global_var import *
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-url = 'https://animeko.herokuapp.com'
-# url = '*'
+# url = 'https://animeko.herokuapp.com'
+url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
-# os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db.init_app(app)
 
@@ -61,9 +60,9 @@ def get_quote_of_the_day():
     }
     r = requests.get(url, params=params)
     json = r.json()
-
+    print(r.url)
     posts = {
-        'data': []
+        'prev': []
     }
     quote_of_the_day = {}
     for post in json['data']:
@@ -73,10 +72,10 @@ def get_quote_of_the_day():
                 'id': ids[0],
                 'story_fbid': ids[1]
             }
-            if not 'quote_of_the_day' in posts:
-                posts['quote_of_the_day'] = data
+            if not 'today' in posts:
+                posts['today'] = data
             elif re.search("Quote of the day #[0-9]".lower(), post['message'].lower()):
-                posts['data'].append(data)
+                posts['prev'].append(data)
 
     return posts
 
@@ -94,32 +93,56 @@ def get_popular_anime(total):
     return ret
     # return [{'name': anime.name, 'image': anime.image, 'views': anime.views} for anime in animes]
 
-@app.route('/')
-def index():
-    popular_animes = get_popular_anime(6)
-    quote_of_the_day = get_random_quotes(1).pop(0)
-    print(quote_of_the_day)
-    return render_template('index.html',
-        total_quotes=total_quotes,
-        popular_animes=popular_animes,
-        quote_of_the_day=quote_of_the_day)
-
-@app.route('/quote')
-def quote():
-    return render_template('quoteByRandom.html')
-
+'''
+    Generate 20 random quotes from db
+'''
 @app.route('/generate_random_quotes')
 def generate_random_quotes():
     quotes = get_random_quotes(20)
-    if quotes:
-        return {'results': quotes, 'status': 200}, 200, {'Access-Control-Allow-Origin': url}
-    else:
-        return {'results': [], 'status': 404}, 404, {'Access-Control-Allow-Origin': url}
 
+    ret = {
+        'result': quotes,
+        'status': 200
+    }
+    if quotes:
+        return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+    else:
+        ret['status'] = 404
+        return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+
+@app.route('/general')
+def general():
+    ret = {
+        'total': Quote.query.count(),
+        'top': get_popular_anime(6),
+        'quote': get_random_quotes(1).pop(0),
+        'status': 200
+    }
+    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+
+'''
+    Return list of anime titles in our db
+'''
+@app.route('/list')
+def list():
+    ret = {
+        'animes': anime_list,
+        'status': 200
+    }
+    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+
+'''
+    Gets list of quotes from given anime "title"
+'''
 @app.route('/anime', methods=['GET', 'POST'])
 def anime():
-    if 'name' in request.args:
-        anime = Anime.query.filter(Anime.name.ilike(request.args['name'])).first()
+    ret = {
+        'result': 'Invalid API usage: /anime?title=anime_title',
+        'status': 404
+    }
+
+    if 'title' in request.args:
+        anime = Anime.query.filter(Anime.name.ilike(request.args['title'])).first()
         if anime:
             anime.views += 1
             db.session.commit()
@@ -151,8 +174,16 @@ def anime():
             a['views'] = anime.views
 
             print(a)
-            return render_template('quotesByAnime.html', anime=a)
-    return render_template('anime.html', animes=anime_list)
+
+            ret['result'] = a
+            ret['status'] = 200
+            return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+        else:
+            ret['result'] = 'Anime Title not found'
+            ret['status'] = 400
+            return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+
+    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
 
 @app.route('/about')
 def about():
@@ -168,12 +199,24 @@ def about():
             "answer": "Yes, all you need to do is email our enquiry email, and if it not available and appropaite than we'll put it up. We also keep an author which is your instagram andit will display under the quotes.",
         }]
     }
-    return render_template('about.html', faq=faq, nav_change="#2e92ee")
+    return {}
 
 @app.route('/quote_of_the_day')
 def quote_of_the_day():
+    '''
+    {
+        today: { id }
+        prev: [{ id }]
+    }
+    '''
     posts = get_quote_of_the_day()
-    return render_template('quoteOfTheDay.html', posts=posts)
+
+    ret = {
+        'result': posts,
+        'status': 200
+    }
+    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+    # return render_template('quoteOfTheDay.html', posts=posts)
 
 @app.route('/api/upvote', methods=['POST'])
 def upvote():
@@ -197,27 +240,27 @@ def downvote():
 ##### Error Handling #####
 @app.errorhandler(404)
 def page_not_found(e):
-    err = {
-        'status': 404,
-        'message': 'Sorry, the page does not exist. Maybe the URL is typed incorrectly'
+    ret = {
+        'result': 'Invalid API call',
+        'status': 404
     }
-    return render_template('err.html', err=err), err['status']
+    return ret, ret['status']
 
 @app.errorhandler(400)
 def page_not_found(e):
-    err = {
-        'status': 400,
-        'message': 'Sorry, No results'
+    ret = {
+        'result': 'Invalid API call',
+        'status': 400
     }
-    return render_template('err.html', err=err), err['status']
+    return ret, ret['status']
 
 @app.errorhandler(500)
 def page_not_found(e):
-    err = {
-        'status': 500,
-        'message': 'Sorry, Internal Server Error. This is our end thats not working.'
+    ret = {
+        'result': 'Invalid API call',
+        'status': 500
     }
-    return render_template('err.html', err=err), err['status']
+    return ret, ret['status']
 
 # favicon display
 @app.route('/favicon.ico')
