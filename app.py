@@ -22,6 +22,7 @@ app.url_map.strict_slashes = False
 url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
+os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db.init_app(app)
 
@@ -153,6 +154,7 @@ def anime():
             a['characters'] = []
             a['total_quotes'] = 0
             a['tags'] = []
+            tags = []
             for character in anime.characters:
                 a['total_quotes'] += len(character.quotes)
                 c = {}
@@ -160,7 +162,7 @@ def anime():
                 c['image'] = character.image
                 c['quotes'] = []
                 for quote in character.quotes:
-                    a['tags'].extend(quote.tags)
+                    tags.extend(quote.tags)
                     q = {}
                     q['id'] = quote.id
                     q['quote'] = quote.quote
@@ -170,10 +172,11 @@ def anime():
                     c['quotes'].append(q)
                 c['views'] = character.views
                 a['characters'].append(c)
-            a['tags'] = list(set(a['tags']))
+            # a['tags'] = list(set(a['tags']))
+            for tag in tags:
+                if not tag in a['tags']:
+                    a['tags'].append(tag)
             a['views'] = anime.views
-
-            print(a)
 
             ret['result'] = a
             ret['status'] = 200
