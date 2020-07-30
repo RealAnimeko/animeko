@@ -192,7 +192,7 @@ def anime():
 @app.route('/about')
 def about():
     ret = {
-      "about": "Animeko's purpose to provide everyone with quotes that inspire, and motivate. Since we are currently new, we have limited features, but as time progresses, we will continue to integrate more things anime quote related. So stay tune by LIKING our fb page for updates and join the community."
+      "about": "Animeko's purpose to provide everyone with quotes that inspire, and motivate. Since we are currently new, we have limited features, but as time progresses, we will continue to integrate more things anime quote related. So stay tune by LIKING our fb page for updates and join the community.",
       "faq": [
         {
             "question": "Why does it load slowly sometimes?",
