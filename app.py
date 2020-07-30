@@ -22,7 +22,6 @@ app.url_map.strict_slashes = False
 url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
-os.environ['DATABASE_URL'] = 'postgres://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 db.init_app(app)
@@ -62,7 +61,7 @@ def get_quote_of_the_day():
     }
     r = requests.get(url, params=params)
     json = r.json()
-    
+
     # print(r.url)
     posts = {
         'prev': []
@@ -193,6 +192,7 @@ def anime():
 @app.route('/about')
 def about():
     ret = {
+      "about": "Animeko's purpose to provide everyone with quotes that inspire, and motivate. Since we are currently new, we have limited features, but as time progresses, we will continue to integrate more things anime quote related. So stay tune by LIKING our fb page for updates and join the community."
       "faq": [
         {
             "question": "Why does it load slowly sometimes?",
