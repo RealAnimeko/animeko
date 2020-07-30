@@ -192,8 +192,7 @@ def anime():
 
 @app.route('/about')
 def about():
-    about = []
-    faq = {
+    ret = {
       "faq": [
         {
             "question": "Why does it load slowly sometimes?",
@@ -202,9 +201,10 @@ def about():
         }, {
             "question": "Can I request a quote to be put up?",
             "answer": "Yes, all you need to do is email our enquiry email, and if it not available and appropaite than we'll put it up. We also keep an author which is your instagram andit will display under the quotes.",
-        }]
+        }],
+        "status": 200
     }
-    return {}
+    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
 
 @app.route('/quote_of_the_day')
 def quote_of_the_day():
