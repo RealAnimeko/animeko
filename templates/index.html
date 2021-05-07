@@ -1,144 +1,159 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+  <style media="screen">
+    :root {
+      --primary: rgb(73, 11, 227);
+    }
 
-    <style media="screen">
+    h2 { font-size: 1.65rem; line-height: 1.25; }
 
-        .title {
-            text-align: center;
-            margin-bottom: 2em;
-            font-weight: 700;
-        }
+    code {
+      color: var(--primary);
+      border-radius: 3px;
+      border: 0.5px solid rgb(242, 242, 242);
+      background-color: rgb(250, 250, 250);
+      padding: 0px 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
 
-        .card {
-            border-radius: 7px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        }
+    .hr {
+      padding: 0.5em 0;
+      /* border-bottom: 1px solid #eaecef; */
+    }
+    pre.prettyprint {
+      border-radius: 6px;
+      border: 1px solid #eaecef;
+    }
+    pre {
+      background-color: rgb(250, 250, 250);
+    }
 
-        .card:hover { box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22); }
-        .card-title { font-size: 18px; }
+    .nav {
+      overflow-y: scroll;
+      border-bottom: 1px solid #eaecef;
+    }
 
-        .card-img-overlay {
-            background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
-        }
+    .method {
+      padding: .25rem .5rem;
+      margin-right: .5rem
+    }
 
-        .card-img-overlay:hover {
-            background: none;
-        }
+    .endpoint {
+      color: #476582;
+      padding: .25rem .5rem;
+      margin-left: .5rem
+      font-size: .85em;
+      background-color: rgba(27,31,35,.05);
+      border-radius: 3px;
+    }
 
-        .qotd-image {
-            border-radius: 7px;
-        }
+    .sidebar {
+        border-right: 1px solid #eaecef;
+    }
 
-        .feature-icon {
-            font-size: 30px;
-            color: #2e92ee;
-        }
+    .div-endpoint {
+      border-bottom: 1px solid #eaecef;
+      margin: 5rem 2.5rem;
+      padding-bottom: 5rem;
+    }
 
-        #bg {
-            -webkit-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
-            -moz-box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
-            box-shadow: inset 0px 0px 150px 0px rgba(0,0,0,1);
-        }
-        
-        .features-title { margin-bottom: 25px; }
-        .features-text { line-height: 1.4 }
-    </style>
+    .endpoint-title { padding-bottom: 10px; }
 
-        <section id="bg" class="header text-white center-wrapper">
-            <div class="center-content">
-                <h1 class="text-center text-bold box-shadow">Animeko</h1>
-                <h1 class="text-center text-bold box-shadow">Read from over {{ total_quotes }} quotes</h1>
-                <div class="row no-gutters mt-5">
-                    <div class="col-sm-6">
-                        <a href="{{ url_for('quote') }}" class="btn btn-outline-white text-white" type="button">Start Reading</a>
-                    </div>
-                    <div class="col-sm-6">
-                        <a href="{{ url_for('anime') }}" class="btn bg-white text-blue" type="button">Search For Anime</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+    .param-title {
+      font-weight: 500;
+      padding-right: .5em;
+    }
+    .text-bold { font-weight: 700; }
+    .text-semi { font-weight: 500; }
+    .text-disable { color: #476582; }
 
-        <div class="social-banner row no-gutters mb-25">
-            <div class="col-sm-4">
-                <div class="fb-like" data-href="https://www.facebook.com/Animeko-101129927954000/" data-layout="button_count" data-action="like" data-size="large" data-share="false"></div>
-            </div>
-            <div class="col-sm-8">
-                <span class="text-center text-white social-text">
-                    <h3>Like our FB Page!</h3>
-                </span>
-            </div>
+  </style>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3 bg-white sticky-top sidebar">
+        <div class="d-flex flex-sm-column flex-row flex-nowrap align-items-center sticky-top">
+        <a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right">
+          ANIMEKO
+        </a>
+        <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+          {% for item in doc.data %}
+          <li class="nav-item">
+            <a href="#{{ item.title }}" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="">{{ item.title }}</a>
+          </li>
+          {% endfor %}
+        </ul>
         </div>
+      </div>
+      <div class="col-md-9 p-3 min-vh-100">
+        {% for item in doc.data %}
+        <div class="row g-0 div-endpoint" id="{{ item.title }}">
+          <div class="col-md-6">
+            <h2 class="endpoint-title">{{ item.title }}</h2>
+            <div class="mb-3">
+              <span class="method text-bold">{{ item.requestMethod }}</span><code class="endpoint">{{ item.endpoint }}</code>
+            </div>
 
-        <section class="container">
+            <div class="mb-5">{{ item.description|safe }}</div>
 
-            <section id="advertising-1"></section>
-
-            <section>
-                <h2 class="title">Features</h2>
-                <div class="row no-gutters text-center">
-                    <div class="col-lg-4 mb-3 pr-2 pl-2">
-                        <div class="fas fa-globe-asia feature-icon mb-25"></div>
-                        <h3 class="features-title">Read From Anywhere</h3>
-                        <p class="features-text">
-                            Enjoy getting inspirations and motivation from home, outside,
-                            where ever and where ever.
-                        </p>
-                    </div>
-                    <div class="col-lg-4 mb-3 pr-2 pl-2">
-                        <div class="fas fa-bookmark feature-icon mb-25"></div>
-                        <h3 class="features-title">Revisit Favourite Quotes</h3>
-                        <p class="features-text">
-                            Want I place to read your favourite anime characters quotes?
-                            Right here all in one place.
-                        </p>
-                    </div>
-                    <div class="col-lg-4 mb-3 pr-2 pl-2">
-                        <div class="fas fa-smile feature-icon mb-25"></div>
-                        <h3 class="features-title">Get Inspiration</h3>
-                        <p class="features-text">
-                            Our main goal is to provided y'all with inspiration from
-                            quotes from your beloved characters
-                        </p>
-                    </div>
+            <div class="mb-5">
+              <div class="text-bold mb-3"> Parameters </div>
+              {% for param in item.parameters %}
+                <div class="hr">
+                  <span class="param-title">{{ param.param }}</span>
+                  <span class="text-disable">{{ param.optional }}</span>
+                  <div class="param-desc">{{ param.description|safe }}</div>
                 </div>
-            </section>
+              {% endfor %}
+            </div>
 
-            <section>
-                <h2 class="title">Top Anime</h2>
+            <div class="mb-5">
+              <span class="text-bold mb-3"> JSON Schema </span>
+              <code class="">{{ item.schema.responseContentType }}</code>
+              <div class="">
+                {% for param in item.schema.schema %}
+                  <div class="hr">
+                    <span class="param-title">{{ param.param }}</span>
+                    <span class="text-disable">{{ param.type }}</span>
+                    <div class="param-desc">{{ param.description|safe }}</div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
 
-                <div class="row no-gutters mr-auto ml-auto mb-5">
-                    {% for anime in popular_animes %}
-                        <div class="col-lg-4">
-                            <a href="{{ url_for('anime', name=anime.name) }}">
-                            <div class="card h-100 text-white">
-                                <img class="card-img" src="https://www.dropbox.com/s/{{ anime.image }}?raw=1" style="height: inherit;">
-                                <div class="card-img-overlay">
-                                  <div class="card-title">{{ anime.name }}</div>
-                                </div>
-                            </div>
-                            </a>
-                        </div>
-                    {%  endfor %}
-                </div>
-            </section>
+            <div class="text-bold mb-3"> Usage </div>
+            <code class="endpoint">{{ doc.base }}{{ item.example.url }}</code>
+          </div>
+          <div class="col-md-6">
+            <pre class="prettyprint">
+            {{ item.example.ret }}
+            </pre>
+          </div>
+        </div>
+        {% endfor %}
 
-            <section>
-                <h2 class="title">Enjoy this quote 🔥</h2>
+        {% for item in doc.type %}
+        <div class="div-endpoint mb-5">
+          <div class="" id="{{ item.id }}">
+            <h2 class="endpoint-title">{{ item.id }}</h2>
 
-                <div class="row no-gutters">
-                    <div class="col-lg-6 mb-5">
-                        <img class="qotd-image" src="https://www.dropbox.com/s/{{ quote_of_the_day['image'] }}?raw=1" alt="" style="width: 100%;">
-                    </div>
-                    <div class="col-lg-6 pl-5 pr-5 center-wrapper">
-                        <div class="center-content">
-                            <h2 class="text-bold">"{{ quote_of_the_day['quote']|safe }}"</h2>
-                            <h3 class="qotd-character">~ {{ quote_of_the_day['character'] }}</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <div class="text-bold mb-3"> Schema </div>
+            {% for param in item.schema %}
+              <div class="mb-2">
+                <span class="param-title">{{ param.param }}</span>
+                <span class="text-disable">{{ param.type }}</span>
+                <div class="param-desc">{{ param.description|safe }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
 
-        </section>
+        {% include 'footer.html' %}
+      </div>
+    </div>
+  </div>
+
 {% endblock %}

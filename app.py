@@ -9,6 +9,7 @@ import random
 import requests
 import re
 from datetime import datetime
+import markdown
 
 from models import db
 import os
@@ -18,12 +19,12 @@ from global_var import *
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-# url = 'https://animeko.herokuapp.com'
-url = '*'
+url = 'https://animeko.herokuapp.com'
+# url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
+os.environ['DATABASE_URL'] = 'postgresql://pniqfgxbqkqetu:6ecba25eebbfb5f164f03e9b6082e377558bde0517614b55f9beb896b73b9794@ec2-18-213-176-229.compute-1.amazonaws.com:5432/d8spdda2p97kqe'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-
 db.init_app(app)
 
 def get_random_quotes(total):
@@ -57,14 +58,13 @@ def get_quote_of_the_day():
         'version':'v7.0',
         'path':'101129927954000%2Fposts',
         'classic':'0',
-        'access_token':'EAAHkCZAp4QgMBAF9NMwFcwn6ABThmIstiL2QlLwzfWPzALEggL3ZCQygYatdrRiujxZAQOwGHuQOFVqqqJwcpiMYZARn5wVm38rMEyOkg24cjcDGOlXzRclJF7VJuJddviZB5oCssYsbOSFxWyidGrxP4017Nj3aWwvCa8Ki6EAZDZD'
+        'access_token':'EAAHkCZAp4QgMBANeC4PSHRUEp3vmbsJcs2INCnZCXuKfylZCYI7AGlstaMOJ1WnhAIigufMdb9vQ4t5aYHM9NFeysZCRrGIRFPikpziAmprhULuqJBvaPN3aszpri4cTHHr6PLoF0ZBZAfeZAYWALuZB5DjD6pnfxi0FjMW4ZBnzoywZDZD'
     }
     r = requests.get(url, params=params)
     json = r.json()
 
-    # print(r.url)
     posts = {
-        'prev': []
+        'data': []
     }
     quote_of_the_day = {}
     for post in json['data']:
@@ -74,10 +74,10 @@ def get_quote_of_the_day():
                 'id': ids[0],
                 'story_fbid': ids[1]
             }
-            if not 'today' in posts:
-                posts['today'] = data
+            if not 'quote_of_the_day' in posts:
+                posts['quote_of_the_day'] = data
             elif re.search("Quote of the day #[0-9]".lower(), post['message'].lower()):
-                posts['prev'].append(data)
+                posts['data'].append(data)
 
     return posts
 
@@ -95,56 +95,178 @@ def get_popular_anime(total):
     return ret
     # return [{'name': anime.name, 'image': anime.image, 'views': anime.views} for anime in animes]
 
-'''
-    Generate 20 random quotes from db
-'''
-@app.route('/generate_random_quotes')
+# Array of anime names
+list_api = {
+    'title': 'API.AnimeNameList',
+    'description': markdown.markdown(
+        'Returns an `array` of available anime list that contains quotes.'
+    ),
+    'requestMethod': 'GET',
+    'endpoint': '/list',
+    'parameters': [
+
+    ],
+    'schema': {
+        'responseContentType': 'application/json',
+        'schema': [
+            { 'param': 'data', 'type': 'array', 'description': markdown.markdown('List of all available searchable anime titles')}
+        ]
+    },
+    'response': [
+        { 'statusCode': 200, 'description': 'list of anime names' }
+    ],
+    'example': {
+        'url': '/list',
+        'ret': '''
+    {
+        "data": [
+            "3-gatsu no Lion",
+            "5 Centimeters Per Second",
+            "A Place Further Than The Universe",
+            "Akame Ga Kill",
+            "Angel Beats!",
+            "Assassination Classroom",
+            "Attack on Titan",
+            "Avatar",
+            "Barakamon",
+            "Beyond the Boundary",
+            "Black Clover",
+            ...
+            ]
+    }
+        '''
+    }
+}
+@app.route('/list', methods=['GET'])
+def anime_name_list():
+    ret = { 'data': anime_list }
+    return ret
+
+random_quotes_api = {
+    'title': 'API.QuoteByRandom',
+    'description': '',
+    'requestMethod': 'GET',
+    'endpoint': '/quotes/random',
+    'schema': {
+        'responseContentType': 'application/json',
+        'schema': [
+            { 'param': 'data', 'type': 'array', 'description': 'List of n quotes randomised from the database. See <a href="#TYPE.QUOTE">TYPE.QUOTE</a> for schema.'},
+        ]
+    },
+    'response': [
+        { 'statusCode': 200, 'description': 'list of anime names' }
+    ],
+    'example': {
+        'url': '/quotes/random',
+        'ret': '''
+    {
+        "data": [
+            {
+                "character": "Shigeo Kageyama",
+                "image": "t0so4552ue0rkil/mob_psycho_shigeo.png",
+                "quote": "I don\u2019t want to see anyone else <span class=\"text-lightred\">hurting</span> people, or anyone else getting <span class=\"text-lightred\">hurt</span>."
+            },
+            ...
+        ]
+    },
+    '''
+    }
+}
+@app.route('/quotes/random')
 def generate_random_quotes():
     quotes = get_random_quotes(20)
-
-    ret = {
-        'result': quotes,
-        'status': 200
-    }
     if quotes:
-        return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+        return {'data': quotes, 'status': 200}, 200, {'Access-Control-Allow-Origin': url}
     else:
-        ret['status'] = 404
-        return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+        return {'data': [], 'status': 404}, 404, {'Access-Control-Allow-Origin': url}
 
-@app.route('/general')
-def general():
-    ret = {
-        'total': Quote.query.count(),
-        'top': get_popular_anime(6),
-        'quote': get_random_quotes(1).pop(0),
-        'status': 200
+anime_quotes_api = {
+    'title': 'API.QuoteByAnime',
+    'description': 'Returns a JSON response of quotes from the given anime titles.',
+    'requestMethod': 'GET',
+    'endpoint': '/anime?name={titleOfAnime}',
+    'parameters': [
+        { 'param': 'title', 'optional': False, 'description': markdown.markdown('Input a list of anime titles with the delimiter `,`' )}
+    ],
+    'schema': {
+        'responseContentType': 'application/json',
+        'schema': [
+            { 'param': 'character', 'type': 'array', 'description': 'List of all characters from the inputted anime. See See <a href="#TYPE.CHARACTER">TYPE.CHARACTER</a> for schema.'},
+            { 'param': 'image', 'type': 'string', 'description': 'URL for the image of the anime title.'},
+            { 'param': 'name', 'type': 'string', 'description': 'The name of the anime.'},
+            { 'param': 'tags', 'type': 'array', 'description': 'List of tags relevant to the quote.'},
+            { 'param': 'total_quotes', 'type': 'int', 'description': 'The total number of quotes from all the characters in the anime.'},
+            { 'param': 'views', 'type': 'int', 'description': 'The total number of views for the anime.'},
+
+        ]
+    },
+    'response': [
+        { 'statusCode': 200, 'description': 'a JSON of characters from the anime with their respected quotes' }
+    ],
+    'example': {
+        'url': '/anime?name=avatar',
+        'ret': '''
+    {
+        "characters": [
+            {
+                "image": "g76iwd8tr5okmnc/avatar_the_last_airbender_aang.png",
+                "name": "Aang",
+                "quotes": [
+                    {
+                        "id": 78,
+                        "likes": 0,
+                        "quote": "The past can be a great <span class='text-orange'>teacher</span>.",
+                        "tags": [
+                            "motivational",
+                            ...
+                            ],
+                        "views": 0
+                    },
+                    ...
+            },
+            ...
+        ],
+        "image": "tv364a19lxbcthl/avatar_the_last_airbender.png",
+        "name": "Avatar",
+        "tags": [
+            "life",
+            "change",
+            "philosophical",
+            "motivatonal",
+            "live",
+            "motivational"
+        ],
+        "total_quotes": 11,
+        "views": 10
     }
-    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
-
-'''
-    Return list of anime titles in our db
-'''
-@app.route('/list')
-def list():
-    ret = {
-        'animes': anime_list,
-        'status': 200
+    '''
     }
-    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+}
 
-'''
-    Gets list of quotes from given anime "title"
-'''
+character_type = {
+    'id': 'TYPE.CHARACTER',
+    'schema': [
+        { 'param': 'image', 'type': 'string', 'description': 'URL for the image of the character.'},
+        { 'param': 'name', 'type': 'string', 'description': 'The name of the anime character.'},
+        { 'param': 'quotes', 'type': 'array', 'description': 'List of all available quotes. See <a href="#TYPE.QUOTE">TYPE.QUOTE</a> for schema.'}
+    ]
+}
+
+quote_type = {
+    'id': 'TYPE.QUOTE',
+    'schema': [
+        { 'param': 'id', 'type': 'int', 'description': 'The unique id for the quote'},
+        { 'param': 'likes', 'type': 'int', 'description': 'The amount of likes for a given quote.'},
+        { 'param': 'quote', 'type': 'array', 'description': 'HTML version of the quote.'},
+        { 'param': 'tags', 'type': 'array', 'description': 'List of tags relevant to the quote.'},
+        { 'param': 'views', 'type': 'int', 'description': 'The amount of views on the given quote.'}
+    ]
+}
+
 @app.route('/anime', methods=['GET', 'POST'])
 def anime():
-    ret = {
-        'result': 'Invalid API usage: /anime?title=anime_title',
-        'status': 404
-    }
-
-    if 'title' in request.args:
-        anime = Anime.query.filter(Anime.name.ilike(request.args['title'])).first()
+    if 'name' in request.args:
+        anime = Anime.query.filter(Anime.name.ilike(request.args['name'])).first()
         if anime:
             anime.views += 1
             db.session.commit()
@@ -155,7 +277,6 @@ def anime():
             a['characters'] = []
             a['total_quotes'] = 0
             a['tags'] = []
-            tags = []
             for character in anime.characters:
                 a['total_quotes'] += len(character.quotes)
                 c = {}
@@ -163,7 +284,7 @@ def anime():
                 c['image'] = character.image
                 c['quotes'] = []
                 for quote in character.quotes:
-                    tags.extend(quote.tags)
+                    a['tags'].extend(quote.tags)
                     q = {}
                     q['id'] = quote.id
                     q['quote'] = quote.quote
@@ -173,55 +294,29 @@ def anime():
                     c['quotes'].append(q)
                 c['views'] = character.views
                 a['characters'].append(c)
-            # a['tags'] = list(set(a['tags']))
-            for tag in tags:
-                if not tag in a['tags']:
-                    a['tags'].append(tag)
+            a['tags'] = list(set(a['tags']))
             a['views'] = anime.views
 
-            ret['result'] = a
-            ret['status'] = 200
-            return ret, ret['status'], {'Access-Control-Allow-Origin': url}
-        else:
-            ret['result'] = 'Anime Title not found'
-            ret['status'] = 400
-            return ret, ret['status'], {'Access-Control-Allow-Origin': url}
+            print(a)
+            return a
+    return {'data': [], 'status': 404}, 404, {'Access-Control-Allow-Origin': url}
 
-    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
 
-@app.route('/about')
-def about():
-    ret = {
-      "about": "Animeko's purpose to provide everyone with quotes that inspire, and motivate. Since we are currently new, we have limited features, but as time progresses, we will continue to integrate more things anime quote related. So stay tune by LIKING our fb page for updates and join the community.",
-      "faq": [
-        {
-            "question": "Why does it load slowly sometimes?",
-            "answer": "The main reason we load slowly, it that we are hosting on a free server called Heruko. For you who don't know Heroku, basically the free tier will put my site to sleep, everytime it is not used for a period of time. Meaning when someone accesses Animeko whilst the its sleeping, then it need time to awake up and load the entire backend server up. As time progresses and milestones are reached, then maybe we move to other services.",
-
-        }, {
-            "question": "Can I request a quote to be put up?",
-            "answer": "Yes, all you need to do is email our enquiry email, and if it not available and appropaite than we'll put it up. We also keep an author which is your instagram andit will display under the quotes.",
-        }],
-        "status": 200
+@app.route('/')
+def index():
+    doc = {
+        'data': [
+            list_api,
+            random_quotes_api,
+            anime_quotes_api
+        ],
+        'type': [
+            character_type,
+            quote_type
+        ],
+        'base': url
     }
-    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
-
-@app.route('/quote_of_the_day')
-def quote_of_the_day():
-    '''
-    {
-        today: { id }
-        prev: [{ id }]
-    }
-    '''
-    posts = get_quote_of_the_day()
-
-    ret = {
-        'result': posts,
-        'status': 200
-    }
-    return ret, ret['status'], {'Access-Control-Allow-Origin': url}
-    # return render_template('quoteOfTheDay.html', posts=posts)
+    return render_template('index.html', doc=doc)
 
 @app.route('/api/upvote', methods=['POST'])
 def upvote():
@@ -241,31 +336,6 @@ def downvote():
             quote.likes -= 1
         db.session.commit()
     return {'likes': quote.likes, 'status': 200}, 200, {'Access-Control-Allow-Origin': url}
-
-##### Error Handling #####
-@app.errorhandler(404)
-def page_not_found(e):
-    ret = {
-        'result': 'Invalid API call',
-        'status': 404
-    }
-    return ret, ret['status']
-
-@app.errorhandler(400)
-def page_not_found(e):
-    ret = {
-        'result': 'Invalid API call',
-        'status': 400
-    }
-    return ret, ret['status']
-
-@app.errorhandler(500)
-def page_not_found(e):
-    ret = {
-        'result': 'Invalid API call',
-        'status': 500
-    }
-    return ret, ret['status']
 
 # favicon display
 @app.route('/favicon.ico')
