@@ -19,7 +19,7 @@ from global_var import *
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-url = 'https://z5208980.github.io/animeko/#' # 'https://animeko.herokuapp.com'
+url = 'https://z5208980.github.io/' # 'https://animeko.herokuapp.com'
 # url = '*'
 cors = CORS(app, resources={r"/*": {'origins': url}})
 
